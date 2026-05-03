@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Letter Builder - Bahar Web</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/ribbon.css">
+</head>
+<body>
+
+    <header id="universal-header"></header>
+
+    <div class="word-workspace">
+        
+        <!-- PAGE 1 -->
+        <!-- Notice we removed contenteditable="true" from the parent .word-page -->
+        <div class="word-page">
+            
+            <!-- Letterhead stays un-editable so Ctrl+A ignores it -->
+            <div id="bahar-document-header"></div>
+            
+            <!-- FIX: Only this specific box is editable! -->
+            <div class="editable-content" contenteditable="true">
+                <p>Start typing your official letter here...</p>
+                <p>Because the letterhead is outside this box, pressing <b>Ctrl+A</b> will now only select this text!</p>
+                <p><br></p>
+            </div>
+            
+            <div class="page-footer">Page 1</div>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../js/header.js"></script>
+    <script src="../js/pad-header.js"></script>
+    <script src="../js/ribbon.js"></script>
+    <script src="../js/auto-builder.js"></script>
+</body>
+</html>

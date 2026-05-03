@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stamping Invoice - Bahar Web</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Centralized CSS -->
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/ribbon.css">
+
+    <style>
+        /* Specific Styles strictly for the Invoice Tables */
+        .corporate-border-box {
+            border: 2px solid black;
+            margin-top: 15px;
+            padding-bottom: 20px;
+        }
+
+        /* Ensure inline-edits stay strictly inline so they don't break sentences */
+        .inline-edit { 
+            display: inline-block; 
+            width: auto; 
+            min-width: 80px; 
+            text-align: center; 
+            font-weight: bold; 
+            background: #f1f5f9; 
+            border-bottom: 1px solid #cbd5e1; 
+            outline: none; 
+        }
+        .inline-edit:hover, .inline-edit:focus { background: #e2e8f0; border-color: #94a3b8; }
+
+        /* Editable fields fill the block but center the text */
+        .editable-field {
+            outline: none;
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .text-left { text-align: left !important; }
+
+        .grid-table { width: 100%; border-collapse: collapse; }
+        .grid-table td, .grid-table th { border: 1px solid black; padding: 6px 10px; font-size: 0.85rem; vertical-align: top; }
+        .grid-table th { font-weight: bold; text-align: left; }
+        
+        .no-top-border { border-top: none !important; }
+        .no-left-border { border-left: none !important; }
+        .no-right-border { border-right: none !important; }
+        .no-bottom-border { border-bottom: none !important; }
+
+        .action-col { width: 40px; text-align: center !important; border-right: none !important; }
+        .btn-small { padding: 4px 8px; font-size: 0.75rem; border: none; border-radius: 4px; cursor: pointer; color: white; background: #004b87; }
+        .btn-clear { background: #ef4444; }
+        
+        /* Default Screen Signature Gap */
+        .signature-box { margin-top: 90px; padding-right: 30px; text-align: right; font-size: 0.95rem; }
+
+        /* Invoice-specific print tweaks */
+        @media print {
+            .inline-edit { background: transparent !important; border: none !important; }
+            .grid-table td, .grid-table th { border: 1px solid black !important; padding: 4px 6px !important; }
+            .action-col { display: none !important; }
+            .corporate-border-box { border: 2px solid black !important; padding-bottom: 5px !important; }
+            .signature-box { margin-top: 75px !important; } 
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Universal Dark Web Header & Quick Pad -->
+    <header id="universal-header" class="no-print"></header>
+    
+    <!-- 2. The Unified Word Workspace -->
+    <div class="word-workspace">
+        
+        <!-- The A4 Paper Page -->
+        <div class="word-page" id="printableInvoice">
+            
+            <!-- THE CENTRALIZED BPCL LETTERHEAD INJECTS HERE -->
+            <div id="bahar-document-header"></div>
+
+            <h3 style="text-align: center; margin: 15px 0 5px 0; font-weight: 800; font-size: 1.2rem; letter-spacing: 1px;">INVOICE</h3>
+
+            <div class="corporate-border-box">
+                
+                <table class="grid-table no-top-border no-left-border no-right-border">
+                    <tr>
+                        <td style="width: 15%;"><strong>INVOICE NO:</strong></td>
+                        <td style="width: 35%;"><div contenteditable="true" class="editable-field text-left" data-placeholder="Enter Invoice No"></div></td>
+                        <td style="width: 20%;"><strong>VENDOR CODE :</strong></td>
+                        <td style="width: 30%;">375911</td>
+                    </tr>
+                    <tr>
+                        <td><strong>INVOICE DATE:</strong></td>
+                        <td><div contenteditable="true" class="editable-field text-left" data-placeholder="DD-MM-YYYY"></div></td>
+                        <td><strong>GSTN NO :</strong></td>
+                        <td>19AAWFB8708J1ZO</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="border-bottom: none;"></td>
+                        <td><strong>PAN NO :</strong></td>
+                        <td>AAWFB8708J</td>
+                    </tr>
+                </table>
+
+                <div style="text-align: center; font-weight: bold; margin: 15px 0; font-size: 0.95rem;">
+                    <div style="display:inline-block; width:auto; min-width: 300px; text-decoration: underline;">Subject: Reimbursement of Stamping Fee</div>
+                </div>
+
+                <table class="grid-table no-left-border no-right-border" style="border-bottom: none;">
+                    <tr>
+                        <td style="width: 50%; border-bottom: none;">
+                            <strong>Consignee/Buyer Address:</strong><br>
+                            <div style="font-weight: 600; line-height: 1.6; margin-top: 5px;">
+                                Bharat Petroleum Corporation Limited<br>
+                                Bharat Bhavan, Plot No.31<br>
+                                Prince Gulam Md.Shah Road,<br>
+                                Golf Green, Kolkata-700095
+                            </div>
+                        </td>
+                        <td style="width: 50%; border-bottom: none;">
+                            <strong>Billing Address:</strong><br>
+                            <div style="font-weight: 600; line-height: 1.6; margin-top: 5px;">
+                                M/s Bharat Petroleum Corporation Limited<br>
+                                Business Excellence center (BPEC)<br>
+                                Plot No.6, Sector-2<br>
+                                Behind CIDCO Garden. Kahargar,<br>
+                                NAVI MUMBAI-410210
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                
+                <div style="padding: 10px; font-size: 0.85rem; font-weight: bold; border-top: 1px solid black; border-bottom: 1px solid black;">
+                    BPCL PAN NO:AAACB2902M GSTN : 19AAACB2902M1ZQ
+                </div>
+
+                <table class="grid-table no-left-border no-right-border no-bottom-border" id="itemsTable" style="margin-top: 0;">
+                    <thead>
+                        <tr>
+                            <th style="width: 8%; text-align: center;">SR NO.</th>
+                            <th style="width: 15%; text-align: center;">HSN/SAC</th>
+                            <th style="width: 45%; text-align: left;">Description</th>
+                            <th style="width: 10%; text-align: center;">QNTY</th>
+                            <th style="width: 10%; text-align: center;">RATE</th>
+                            <th style="width: 12%; text-align: center;">Amount</th>
+                            <th class="action-col no-print"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="invoiceTableBody">
+                        <tr class="item-row">
+                            <td style="text-align: center;"><div contenteditable="true" class="editable-field">1</div></td>
+                            <td style="text-align: center;"><div contenteditable="true" class="editable-field">996211</div></td>
+                            <td><div contenteditable="true" class="editable-field text-left">Stamping fee for the year 2025-2026</div></td>
+                            <td style="text-align: center;"><div contenteditable="true" class="editable-field val-qty">1</div></td>
+                            <td style="text-align: center;"><div contenteditable="true" class="editable-field val-rate">1500</div></td>
+                            <td style="text-align: center; font-weight: 500;" class="val-amount">1500.00</td>
+                            <td class="action-col no-print"><button class="btn-small btn-clear" onclick="deleteRow(this)">X</button></td>
+                        </tr>
+                    </tbody>
+                    
+                    <tbody id="totalsBody">
+                        <tr>
+                            <td colspan="3" rowspan="3" style="vertical-align: bottom; font-weight: bold; font-size: 0.9rem;">
+                                (Rs. <span id="wordsOutput">One Thousand Five Hundred Only</span>)
+                            </td>
+                            <td colspan="2" style="text-align: right;">CGST</td>
+                            <td style="text-align: center;"><div contenteditable="true" class="editable-field val-tax" data-placeholder="NA">NA</div></td>
+                            <td class="action-col no-print"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="text-align: right;">SGST</td>
+                            <td style="text-align: center;"><div contenteditable="true" class="editable-field val-tax" data-placeholder="NA">NA</div></td>
+                            <td class="action-col no-print"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="text-align: right; font-weight: bold;">TOTAL</td>
+                            <td style="text-align: center; font-weight: bold;" id="finalTotalOutput">1500.00</td>
+                            <td class="action-col no-print"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table class="grid-table no-left-border no-right-border no-bottom-border" style="border-top: 2px solid black;">
+                    <tr>
+                        <td style="width: 15%; border: none; font-weight: bold; text-decoration: underline;">Enclosure:</td>
+                        <td style="width: 85%; border: none; line-height: 1.8;">
+                            Original Receipt GRN No. 
+                            <span contenteditable="true" class="inline-edit">192025260282661698</span> 
+                            Dated: <span contenteditable="true" class="inline-edit" style="min-width: 90px;">22-09-2025</span><br>
+                            
+                            Original Certificate No- 
+                            <span contenteditable="true" class="inline-edit">WB/15/0038/2025/000467</span> 
+                            Dated: <span contenteditable="true" class="inline-edit" style="min-width: 90px;">29-10-2025</span>
+                        </td>
+                    </tr>
+                </table>
+
+                <div class="signature-box">
+                    <strong>(Name/Signature/Seal of the Dealer)</strong>
+                </div>
+
+            </div> 
+        </div>
+    </div>
+
+    <!-- The Centralized Scripts -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../js/header.js"></script>
+    <script src="../js/pad-header.js"></script>
+    <script src="../js/ribbon.js"></script>
+
+    <script>
+        function numberToWords(num) {
+            if (num === 0) return "Zero";
+            const a = ['', 'One ', 'Two ', 'Three ', 'Four ', 'Five ', 'Six ', 'Seven ', 'Eight ', 'Nine ', 'Ten ', 'Eleven ', 'Twelve ', 'Thirteen ', 'Fourteen ', 'Fifteen ', 'Sixteen ', 'Seventeen ', 'Eighteen ', 'Nineteen '];
+            const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+            if ((num = num.toString()).length > 9) return 'overflow';
+            let n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+            if (!n) return; let str = '';
+            str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'Crore ' : '';
+            str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'Lakh ' : '';
+            str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'Thousand ' : '';
+            str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'Hundred ' : '';
+            str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + 'Only' : 'Only';
+            return str;
+        }
+
+        function calculateAll() {
+            let grossTotal = 0;
+            document.querySelectorAll('.item-row').forEach(row => {
+                // FIX 1: Use textContent and strip out hidden HTML characters so math never breaks!
+                let qtyStr = row.querySelector('.val-qty').textContent.replace(/[^0-9.]/g, '');
+                let rateStr = row.querySelector('.val-rate').textContent.replace(/[^0-9.]/g, '');
+                
+                let qty = parseFloat(qtyStr) || 0;
+                let rate = parseFloat(rateStr) || 0;
+                let amount = qty * rate;
+                
+                row.querySelector('.val-amount').textContent = amount > 0 ? amount.toFixed(2) : "0.00";
+                grossTotal += amount;
+            });
+
+            let finalTotal = grossTotal;
+            document.querySelectorAll('.val-tax').forEach(taxField => {
+                let textVal = taxField.textContent.replace(/[^0-9.NAna]/g, '').trim().toUpperCase();
+                if(textVal !== 'NA' && textVal !== '') {
+                    let numVal = parseFloat(textVal);
+                    if(!isNaN(numVal)) finalTotal += numVal;
+                }
+            });
+
+            document.getElementById('finalTotalOutput').textContent = finalTotal.toFixed(2);
+            document.getElementById('wordsOutput').textContent = numberToWords(Math.round(finalTotal));
+        }
+
+        // Connect saveDocument to the ribbon
+        window.saveDocument = function() {
+            saveInvoice();
+        };
+
+        function saveInvoice() {
+            if (window.getSelection) {
+                window.getSelection().removeAllRanges();
+            }
+            const invoiceHTML = document.getElementById('printableInvoice').innerHTML;
+            // FIX 2: Create a brand new save file so the old broken ghost data doesn't return
+            localStorage.setItem('BaharSaved_Stamping_v2', invoiceHTML);
+            alert("Invoice Saved Successfully!");
+        }
+
+        function loadInvoice() {
+            // FIX 2: Load from the new, clean save file
+            let savedData = localStorage.getItem('BaharSaved_Stamping_v2');
+            if (savedData) {
+                document.getElementById('printableInvoice').innerHTML = savedData;
+            }
+            
+            // Re-inject the header safely
+            if (typeof injectBaharHeader === 'function') {
+                injectBaharHeader();
+            }
+
+            // Ensures typing instantly triggers math updates (added keyup as a fallback)
+            const invoiceArea = document.getElementById('printableInvoice');
+            invoiceArea.addEventListener('input', calculateAll);
+            invoiceArea.addEventListener('keyup', calculateAll);
+        }
+
+        function clearInvoice() {
+            if(confirm("Completely reset this invoice?")) {
+                localStorage.removeItem('BaharSaved_Stamping_v2');
+                location.reload();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => { 
+            loadInvoice(); 
+            calculateAll(); 
+            
+            window.deleteRow = function(btn) {
+                btn.closest('tr').remove();
+                document.querySelectorAll('.item-row').forEach((row, index) => {
+                    let firstCell = row.querySelector('td:first-child .editable-field');
+                    if(firstCell && !isNaN(firstCell.innerText)) firstCell.innerText = index + 1;
+                });
+                calculateAll();
+            };
+        });
+    </script>
+</body>
+</html>
