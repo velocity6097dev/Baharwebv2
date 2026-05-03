@@ -1,4 +1,3 @@
-```
 
 ---
 
@@ -81,35 +80,3 @@ Baharwebv2-main/
     ├── css/              # Modular stylesheets (Ribbon, Panel, Builder)
     ├── js/               # API clients and UI controllers
     └── pages/            # View templates (fuel-invoice, stamping, index)[cite: 1, 2]
-```
-
----
-
-## ⚙️ Setup & Installation
-
-### **1. Backend Configuration**
-1.  Enter the Backend directory: `cd Backend`[cite: 2].
-2.  Install dependencies: `npm install`[cite: 2].
-3.  Create a `.env` file and define your credentials:
-    ```env
-    PORT=5000
-    MONGO_URI=mongodb_connection_string
-    ```
-4.  Launch server: `npm start`[cite: 2].
-
-### **2. Frontend Launch**
-Since the frontend uses vanilla web technologies, you can open `frontend/pages/index.html` directly in any modern browser or use a local development server like Live Server[cite: 2].
-
----
-
-## 📄 API Reference
-
-*   `GET /api/templates`: Retrieve list of all available templates[cite: 2].
-*   `POST /api/invoices`: Submit and store a new station invoice[cite: 2].
-*   `GET /api/letters`: Access saved correspondence history[cite: 2].
-
----
-<p align="center">
-  <b>Developed for velocity6097dev / Bahar Service Station - Kolkata</b>[cite: 1, 2]
-</p>
-```
