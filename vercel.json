@@ -3,9 +3,9 @@
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/Backend/server.js" },
     { "source": "/", "destination": "/frontend/pages/index.html" },
+    { "source": "/(.*\\.html)", "destination": "/frontend/pages/$1" },
     { "source": "/css/(.*)", "destination": "/frontend/css/$1" },
     { "source": "/js/(.*)", "destination": "/frontend/js/$1" },
-    { "source": "/(.*\\.html)", "destination": "/frontend/pages/$1" },
     { "source": "/(.*)", "destination": "/frontend/$1" }
   ]
 }
