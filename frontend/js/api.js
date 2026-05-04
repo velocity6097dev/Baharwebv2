@@ -1,6 +1,8 @@
 // frontend/js/api.js
 
-const API_BASE_URL = "http://localhost:5000/api"; // We will build this backend next
+// Use a relative path! Vercel's vercel.json will catch anything 
+// starting with '/api' and route it to your Backend/server.js automatically.
+const API_BASE_URL = "/api"; 
 
 async function saveInvoice() {
     const data = {
@@ -11,21 +13,23 @@ async function saveInvoice() {
         date: new Date().toISOString()
     };
 
-    console.log("Mock Saving to MongoDB...", data);
-    alert("Data packaged for MongoDB! (Backend connection pending)");
+    console.log("Saving to MongoDB...", data);
 
-    /* 
-    // This is the actual code that will run once the backend is up:
     try {
+        // I also noticed your previous error tried to hit '/api/templates/invoice', 
+        // so adjust this endpoint if your backend specifically requires '/templates/invoice' instead of just '/templates'
         const response = await fetch(`${API_BASE_URL}/templates`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
+        
         const result = await response.json();
         console.log("Saved!", result);
+        alert("Invoice saved to database successfully!");
+        
     } catch (error) {
         console.error("Database sync failed", error);
+        alert("Failed to connect to the database. Check the console for errors.");
     }
-    */
 }
