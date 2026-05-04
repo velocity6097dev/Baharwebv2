@@ -4,6 +4,10 @@
     <meta charset="UTF-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title>Bahar Service Station - Professional Billing Engine</title> 
+    
+    <!-- Fixes the favicon 404 error -->
+    <link rel="icon" href="data:,">
+    
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script> 
@@ -429,7 +433,8 @@
             const invoiceHTML = document.getElementById('printableInvoice').innerHTML;
 
             try {
-                const response = await fetch('http://localhost:5000/api/templates/invoice', {
+                // Changed from localhost to relative path
+                const response = await fetch('/api/templates/invoice', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -457,7 +462,8 @@
         // 2. Fetch Templates on Startup
         async function loadStartupModal() {
             try {
-                const res = await fetch('http://localhost:5000/api/templates/invoice');
+                // Changed from localhost to relative path
+                const res = await fetch('/api/templates/invoice');
                 const templates = await res.json();
                 
                 const listDiv = document.getElementById('templateList');
@@ -479,14 +485,15 @@
                     });
                 }
             } catch (err) {
-                document.getElementById('templateList').innerHTML = '<p style="color:#ef4444; font-weight:bold;">Error connecting to database. Make sure your Node server is running on port 5000.</p>';
+                document.getElementById('templateList').innerHTML = '<p style="color:#ef4444; font-weight:bold;">Error connecting to database.</p>';
             }
         }
 
         // 3. Load a specific template from the database into the workspace
         async function loadSpecificTemplate(name) {
             try {
-                const res = await fetch(`http://localhost:5000/api/templates/invoice/${encodeURIComponent(name)}`);
+                // Changed from localhost to relative path
+                const res = await fetch(`/api/templates/invoice/${encodeURIComponent(name)}`);
                 const data = await res.json();
                 
                 if(data.htmlData) {
