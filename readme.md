@@ -1,9 +1,4 @@
 
-Here is a complete, well-formatted `README.md` for your repository, styled with appropriate icons, badges, and a clear breakdown of the project architecture.
-
----
-
-```markdown
 # ⛽ Bahar Web v2
 
 ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
@@ -59,7 +54,6 @@ Welcome to **Bahar Web v2**, a comprehensive business process automation and adm
  ┃ ┃ ┗ 📜 templates.html      
  ┗ 📜 vercel.json             # Vercel Serverless Configuration
 
-```
 
 ## 🚀 Getting Started
 
