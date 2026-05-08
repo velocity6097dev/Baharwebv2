@@ -115,7 +115,3 @@ This project includes a `vercel.json` file, making it ready for seamless deploym
 ## 🛠️ Built By
 
 Developed by **velocity6097**.
-
-```
-
-```
