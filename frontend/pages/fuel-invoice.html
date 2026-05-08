@@ -492,14 +492,14 @@
             invoiceArea.addEventListener('keyup', calculateAll);
         }
 
-        // On Page Load: Check URL for template parameter, otherwise start blank
+       // On Page Load: Check URL for template parameter, otherwise start blank
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const templateName = urlParams.get('template');
             
-            if (templateName) {
-                loadSpecificTemplate(templateName);
-            } else {
+            if (templateName && typeof window.loadTemplate === 'function') {
+                window.loadTemplate(templateName); // USE THE NEW RIBBON FUNCTION
+            } else if (typeof startBlank === 'function') {
                 startBlank();
             }
         });
