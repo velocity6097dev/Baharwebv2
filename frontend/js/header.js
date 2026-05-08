@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <h2 style="margin: 0;">Bahar Service Station</h2>
         </div>
         <nav class="nav-links" style="display: flex; align-items: center; gap: 20px;">
-            <a href="panel.html" style="display: flex; align-items: center; gap: 6px; text-decoration: none;">
+            <a href="index.html" style="display: flex; align-items: center; gap: 6px; text-decoration: none;">
                 <i data-lucide="layout-dashboard" style="width: 18px; height: 18px;"></i> Dashboard
             </a>
             <a href="fuel-invoice.html" style="display: flex; align-items: center; gap: 6px; text-decoration: none;">

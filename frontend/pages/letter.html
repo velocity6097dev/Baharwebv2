@@ -13,14 +13,10 @@
 
     <div class="word-workspace">
         
-        <!-- PAGE 1 -->
-        <!-- Notice we removed contenteditable="true" from the parent .word-page -->
         <div class="word-page">
             
-            <!-- Letterhead stays un-editable so Ctrl+A ignores it -->
             <div id="bahar-document-header"></div>
             
-            <!-- FIX: Only this specific box is editable! -->
             <div class="editable-content" contenteditable="true">
                 <p>Start typing your official letter here...</p>
                 <p>Because the letterhead is outside this box, pressing <b>Ctrl+A</b> will now only select this text!</p>
@@ -32,11 +28,21 @@
 
     </div>
 
-    <!-- Scripts -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="../js/header.js"></script>
     <script src="../js/pad-header.js"></script>
     <script src="../js/ribbon.js"></script>
     <script src="../js/auto-builder.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const templateName = urlParams.get('template');
+            
+            if (templateName && typeof window.loadTemplate === 'function') {
+                window.loadTemplate(templateName);
+            }
+        });
+    </script>
 </body>
 </html>

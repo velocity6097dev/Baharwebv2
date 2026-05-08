@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Manager - Bahar Web</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/global.css">
+    <style>
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 15px;
+        }
+        .dashboard-header h1 { color: #0f172a; margin: 0; }
+        
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .template-card {
+            background: white;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .template-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        }
+        .template-card h3 { margin-top: 0; color: #004b87; font-size: 1.2rem; }
+        
+        .create-new {
+            background: #f1f5f9;
+            border: 2px dashed #94a3b8;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            text-align: center;
+            color: #475569;
+        }
+        .create-new:hover { background: #e2e8f0; border-color: #004b87; color: #004b87; }
+        .create-new i { font-size: 2.5rem; margin-bottom: 10px; }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .btn-open { background: #10b981; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; flex: 1; font-weight: 600; }
+        .btn-open:hover { background: #059669; }
+    </style>
+</head>
+<body>
+    <header id="universal-header"></header>
+
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1><i class="fa-solid fa-folder-open"></i> Invoice Templates</h1>
+            <button class="btn-open" style="flex: 0; background: #64748b;" onclick="window.location.href='panel.html'">Back to Dashboard</button>
+        </div>
+
+        <div id="template-grid" class="template-grid">
+            <p>Loading templates from database...</p>
+        </div>
+    </div>
+
+    <script src="../js/header.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', loadTemplates);
+
+        async function loadTemplates() {
+            const grid = document.getElementById('template-grid');
+            
+            try {
+                // Fetch templates from your backend
+                const res = await fetch('/api/templates/invoice');
+                const templates = await res.json();
+                
+                // Always inject the "Create Blank" card first
+                grid.innerHTML = `
+                    <div class="template-card create-new" onclick="window.location.href='fuel-invoice.html'">
+                        <i class="fa-solid fa-plus-circle"></i>
+                        <h3>Create Blank Invoice</h3>
+                    </div>
+                `;
+
+                // Loop through DB templates and make cards
+                templates.forEach(t => {
+                    grid.innerHTML += `
+                        <div class="template-card">
+                            <div>
+                                <h3><i class="fa-solid fa-file-invoice"></i> ${t.templateName}</h3>
+                                <p style="color: #64748b; font-size: 0.9rem;">Type: Fuel Invoice</p>
+                            </div>
+                            <div class="card-actions">
+                                <!-- Notice how we pass the template name in the URL! -->
+                                <button class="btn-open" onclick="window.location.href='fuel-invoice.html?template=${encodeURIComponent(t.templateName)}'">Open & Edit</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (err) {
+                grid.innerHTML = '<p style="color:red;">Error connecting to the database.</p>';
+                console.error(err);
+            }
+        }
+    </script>
+</body>
+</html>
