@@ -100,6 +100,7 @@ node server.js
 
 
 *The server should now be running on `http://localhost:5000`.*
+
 5. **Launch the Frontend:**
 You can serve the `frontend` folder using any static file server (like VS Code's Live Server extension) or simply open `frontend/pages/index.html` in your browser. Ensure that `frontend/js/api.js` is pointing to the correct local API endpoint (e.g., `http://localhost:5000`) during development.
 
