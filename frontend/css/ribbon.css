@@ -1,18 +1,8 @@
 /* frontend/css/ribbon.css */
-
-/* 1. The Top Ribbon Bar */
-.document-ribbon { display: flex; align-items: center; background: #f8fafc; padding: 10px 15px; border-bottom: 2px solid #cbd5e1; gap: 12px; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.05); flex-wrap: wrap; }
-.ribbon-group { display: flex; gap: 4px; align-items: center; }
-
-/* 2. Ribbon Buttons */
-.ribbon-btn { background: white; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 4px; cursor: pointer; color: #1e293b; font-size: 14px; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
-.ribbon-btn:hover { background: #e2e8f0; border-color: #94a3b8; }
-.ribbon-divider { width: 1px; height: 28px; background: #cbd5e1; margin: 0 5px; }
-.ribbon-select { padding: 6px; border-radius: 4px; border: 1px solid #cbd5e1; background: white; cursor: pointer; font-size: 14px; }
-
-/* NEW: Fixed Color Swatch Buttons */
-.color-swatch { width: 24px; height: 24px; border-radius: 4px; border: 1px solid #cbd5e1; cursor: pointer; padding: 0; transition: transform 0.1s; display: inline-block; }
-.color-swatch:hover { transform: scale(1.15); border-color: #64748b; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+/* Page/document layout only. The old execCommand ribbon toolbar (bold,
+   italic, font, colors, alignment, lists...) has moved to HugeRTE, styled
+   in hugerte.css. The Save/Print/Templates action bar now lives in
+   ribbon.js (see .doc-actions-bar, injected inline there). */
 
 /* 3. The Gray Workspace */
 .word-workspace { display: block; background: #e2e8f0; padding: 40px 0; min-height: 100vh; }
@@ -33,7 +23,7 @@
 /* 7. Strict Print Styles */
 @media print {
     @page { margin: 0; size: A4 portrait; }
-    #universal-header, .document-ribbon, .no-print { display: none !important; }
+    #universal-header, .doc-actions-bar, .no-print { display: none !important; }
     body, .word-workspace { background: white !important; padding: 0 !important; margin: 0 !important; display: block !important; }
     .word-page { box-shadow: none !important; margin: 0 !important; padding: 20mm !important; height: 297mm !important; width: 210mm !important; page-break-after: always !important; break-after: page !important; }
 }

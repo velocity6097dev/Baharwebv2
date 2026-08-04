@@ -38,7 +38,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 currentPage.parentNode.insertBefore(newPage, currentPage.nextSibling);
                 updatePageNumbers();
-                
+
+                // HugeRTE hook: this new page's .editable-content is plain
+                // contenteditable until HugeRTE attaches to it too.
+                if (typeof window.initHugeRTE === 'function') {
+                    window.initHugeRTE(newPage.querySelector('.editable-content'));
+                }
+
                 const newParagraph = newPage.querySelector('.editable-content p');
                 const range = document.createRange();
                 const sel = window.getSelection();
@@ -84,6 +90,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         sel.addRange(range);
                     }
                     
+                    // HugeRTE hook: release the editor instance before the
+                    // element it's bound to disappears.
+                    if (typeof window.destroyHugeRTE === 'function') {
+                        window.destroyHugeRTE(editable);
+                    }
+
                     // Delete the page and fix the numbers
                     page.remove();
                     updatePageNumbers();

@@ -11,6 +11,7 @@
 
     <link rel="stylesheet" href="../css/global.css">
     <link rel="stylesheet" href="../css/ribbon.css">
+    <link rel="stylesheet" href="../css/hugerte.css">
 
     <style>
         /* Specific Styles strictly for the Invoice Tables */
@@ -71,14 +72,14 @@
             <div id="bahar-document-header"></div>
             
             <div style="margin-bottom: 1.5rem; font-size: 0.95rem;">
-                <div contenteditable="true" class="editable-field" style="line-height: 1.6; font-weight: 500; text-align: left;" data-placeholder="To Address..."><strong>To,</strong><br><br><br></div>
+                <div contenteditable="true" class="editable-field rte-field" style="line-height: 1.6; font-weight: 500; text-align: left;" data-placeholder="To Address..."><strong>To,</strong><br><br><br></div>
             </div>
 
-            <div contenteditable="true" class="editable-field" style="margin-bottom: 1.5rem; font-size: 0.95rem; font-weight: 700; text-align: left;" data-placeholder="Subject: [Enter Subject Here]">
+            <div contenteditable="true" class="editable-field rte-field" style="margin-bottom: 1.5rem; font-size: 0.95rem; font-weight: 700; text-align: left;" data-placeholder="Subject: [Enter Subject Here]">
                 <strong>Subject:</strong>
             </div>
 
-            <div contenteditable="true" class="editable-field" style="margin-bottom: 1rem; line-height: 1.6; font-size: 0.95rem; text-align: left;" data-placeholder="Body Text...">
+            <div contenteditable="true" class="editable-field rte-field" style="margin-bottom: 1rem; line-height: 1.6; font-size: 0.95rem; text-align: left;" data-placeholder="Body Text...">
                 Sir,<br><br><br>
             </div>
 
@@ -185,6 +186,8 @@
     <script src="../js/header.js"></script>
     <script src="../js/pad-header.js"></script>
     <script src="../js/ribbon.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hugerte@1/hugerte.min.js"></script>
+    <script src="../js/hugerte-setup.js"></script>
 
     <script>
         function calculateAll() {
