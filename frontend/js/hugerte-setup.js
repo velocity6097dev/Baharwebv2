@@ -5,14 +5,17 @@
 // document.execCommand()-based formatting toolbar that used to live in
 // ribbon.js.
 //
-// ribbon.js now owns ONE unified "#bahar-ribbon" strip: its top row is the
-// Save / Print / Export / Templates / Ref No. / Signature / Page Tools
-// actions (formerly a separate floating .doc-actions-bar), and its bottom
-// row is the "#hugerte-format-toolbar" container this file renders
-// HugeRTE's own formatting buttons into. Both rows live in one sticky
-// wrapper so they read - and behave - as a single always-visible ribbon.
-// ribbon.js creates "#hugerte-format-toolbar" itself (it has to exist
-// before HugeRTE inits), this file just looks it up by id.
+// This file also registers a small custom HugeRTE plugin ("baharribbon",
+// see registerBaharRibbonPlugin below) that turns Save / Print / Templates
+// / Export / Ref No. / Signature / Page Tools / Move Blocks into NATIVE
+// HugeRTE toolbar buttons - not a separate custom-styled row. They render
+// inside HugeRTE's own "#hugerte-format-toolbar" container (created by
+// ribbon.js, this file just looks it up by id) using HugeRTE's own button/
+// tooltip/menu chrome, and once that's confirmed working ribbon.js's plain
+// fallback action row hides itself (hugerte.css: body.bahar-hugerte-active
+// .bahar-ribbon-actions). The fallback row only stays visible on
+// stamping-invoice.html, which has no rich-text fields and so never loads
+// HugeRTE - it's the only way those actions are reachable there.
 //
 // Two config options do the heavy lifting for the "ribbon should always be
 // visible, and dropdowns shouldn't get clipped/scrolled" fix:
@@ -35,10 +38,10 @@
 //                                contenteditable so calculateAll() keeps
 //                                working exactly as before.
 //   - stamping-invoice.html  -> has no prose fields at all, so this file
-//                                isn't loaded there - only the Bahar ribbon's
-//                                action row (Save/Print/Export/Templates...)
-//                                from ribbon.js appears, with no formatting
-//                                row underneath it.
+//                                isn't loaded there - only ribbon.js's
+//                                plain fallback action row (Save/Print/
+//                                Export/Templates...) appears, with no
+//                                HugeRTE formatting row underneath it.
 //
 // Pagination (auto-builder.js) is intentionally NOT touched in this pass,
 // other than the one hook it needs so newly-created pages also get a
@@ -94,13 +97,14 @@
         "accordion advlist anchor autolink autoresize autosave charmap code " +
         "codesample directionality emoticons fullscreen help image importcss " +
         "insertdatetime link lists media nonbreaking pagebreak preview quickbars " +
-        "save searchreplace table template visualblocks visualchars wordcount";
+        "save searchreplace table template visualblocks visualchars wordcount baharribbon";
 
     // Grouped so related buttons sit together. This is a lot of buttons for
     // one toolbar - toolbar_mode: 'wrap' (below) lets it flow onto extra
     // rows under the Bahar ribbon's action row instead of hiding half of it
     // behind a "more" overflow chevron.
     const TOOLBAR =
+        "baharsave baharprint bahartemplates baharexport | baharrefnum baharsignature baharpagetools baharblocks | " +
         "undo redo | blocks fontfamily fontsize | " +
         "bold italic underline strikethrough forecolor backcolor removeformat | " +
         "alignleft aligncenter alignright alignjustify | " +
@@ -110,6 +114,104 @@
         "searchreplace visualblocks visualchars ltr rtl | " +
         "code codesample preview fullscreen | " +
         "wordcount help";
+
+    // Registers Save / Print / Templates / Export / Ref No. / Signature /
+    // Page Tools / Move Blocks as genuine HugeRTE toolbar buttons (not a
+    // separate custom-styled row) - they end up living inside the same
+    // toolbar HugeRTE itself renders, using its own button/tooltip/menu
+    // chrome. The actual behaviour still lives in ribbon.js (Save/Print/
+    // Templates) and bahar-tools.js (Export/Ref No./Signature/Page Tools/
+    // Move Blocks) - this plugin is just the wiring between those globals
+    // and HugeRTE's UI registry. Registered once; HugeRTE calls this init
+    // function again per editor instance because 'baharribbon' is in every
+    // instance's plugins list, and each instance's own editor.ui.registry
+    // is separate, so every instance gets its own copy of these buttons -
+    // exactly like the built-in bold/italic/etc. buttons do.
+    function registerBaharRibbonPlugin() {
+        if (!window.hugerte || hugerte.PluginManager.get('baharribbon')) return;
+
+        hugerte.PluginManager.add('baharribbon', function (editor) {
+            editor.ui.registry.addButton('baharsave', {
+                icon: 'save',
+                tooltip: 'Save this document (Ctrl+S)',
+                onAction: () => { if (window.quickSave) window.quickSave(); }
+            });
+
+            editor.ui.registry.addButton('baharprint', {
+                icon: 'print',
+                tooltip: 'Print this document',
+                onAction: () => window.print()
+            });
+
+            editor.ui.registry.addButton('bahartemplates', {
+                icon: 'browse',
+                tooltip: 'Browse & load saved templates',
+                onAction: () => { if (window.openTemplateList) window.openTemplateList(); }
+            });
+
+            editor.ui.registry.addMenuButton('baharexport', {
+                icon: 'export',
+                tooltip: 'Export this document as a file',
+                fetch: (callback) => callback([
+                    { type: 'menuitem', icon: 'export', text: 'Export as PDF', onAction: () => { if (window.exportAsPDF) window.exportAsPDF(); } },
+                    { type: 'menuitem', icon: 'export', text: 'Export as Word (.doc)', onAction: () => { if (window.exportAsWord) window.exportAsWord(); } }
+                ])
+            });
+
+            editor.ui.registry.addButton('baharrefnum', {
+                icon: 'bookmark',
+                tooltip: 'Generate the next reference number',
+                onAction: () => { if (window.openRefNumModal) window.openRefNumModal(); }
+            });
+
+            editor.ui.registry.addButton('baharsignature', {
+                icon: 'permanent-pen',
+                tooltip: 'Insert a signature or stamp',
+                onAction: () => {
+                    // Capture straight from this editor's own selection API
+                    // rather than the generic window.getSelection() fallback -
+                    // this is the same editor instance whose toolbar the
+                    // button was just clicked from, so it's always accurate.
+                    window.baharSavedRange = editor.selection.getRng().cloneRange();
+                    window.baharSavedEditable = editor.getElement();
+                    if (window.openSignatureModal) window.openSignatureModal();
+                }
+            });
+
+            editor.ui.registry.addMenuButton('baharpagetools', {
+                icon: 'page-break',
+                tooltip: 'Page break & A4 layout tools',
+                fetch: (callback) => callback([
+                    {
+                        type: 'menuitem', icon: 'page-break', text: 'Insert Page Break',
+                        onAction: () => {
+                            window.baharSavedRange = editor.selection.getRng().cloneRange();
+                            window.baharSavedEditable = editor.getElement();
+                            if (window.insertPageBreak) window.insertPageBreak();
+                        }
+                    },
+                    {
+                        type: 'menuitem', icon: 'orientation', text: 'Toggle Margin Guides',
+                        onAction: () => { if (window.toggleA4Guides) window.toggleA4Guides(); }
+                    }
+                ])
+            });
+
+            editor.ui.registry.addToggleButton('baharblocks', {
+                icon: 'drag',
+                tooltip: 'Drag to reorder document blocks',
+                onSetup: (api) => {
+                    api.setActive(document.body.classList.contains('bahar-blocks-mode'));
+                    return () => {};
+                },
+                onAction: (api) => {
+                    if (window.toggleBlockDragging) window.toggleBlockDragging();
+                    api.setActive(document.body.classList.contains('bahar-blocks-mode'));
+                }
+            });
+        });
+    }
+    registerBaharRibbonPlugin();
 
     // ribbon.js always creates "#hugerte-format-toolbar" as the bottom row
     // of "#bahar-ribbon" before this script runs (see script order in the
@@ -272,6 +374,10 @@
 
         hugerte.init(buildConfig(el, toolbarContainer)).then(() => {
             el.dataset.hugerteInit = "true";
+            // Native baharsave/baharprint/... buttons are now live inside
+            // HugeRTE's own toolbar (see registerBaharRibbonPlugin above) -
+            // ribbon.js's plain fallback action row is redundant, hide it.
+            document.body.classList.add("bahar-hugerte-active");
         }).catch((err) => {
             console.error("HugeRTE failed to initialize on", el, err);
         });

@@ -12,6 +12,22 @@
  *     If the button list wraps onto more rows, the row (and the sticky
  *     ribbon it lives in) just grows taller instead.
  */
+/*
+ * ribbon.js always renders a plain-HTML fallback action row (Save, Print,
+ * Templates, Export, Ref No., Signature, Page Tools, Move Blocks) in case
+ * HugeRTE never loads on this page. On pages where it DOES load,
+ * hugerte-setup.js registers those same actions as native HugeRTE toolbar
+ * buttons (see the "baharribbon" plugin) so they render inside HugeRTE's
+ * own toolbar row instead of a separate custom-styled bar - at that point
+ * the fallback row is redundant and hidden. stamping-invoice.html has no
+ * HugeRTE fields at all, so "bahar-hugerte-active" never gets set there
+ * and its fallback row stays visible - that's intentional, it's the only
+ * way those actions are reachable on that page.
+ */
+body.bahar-hugerte-active .bahar-ribbon-actions {
+    display: none;
+}
+
 #hugerte-format-toolbar {
     min-height: 0;
 }

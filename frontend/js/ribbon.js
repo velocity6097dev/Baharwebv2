@@ -1,18 +1,35 @@
 // frontend/js/ribbon.js
 //
 // Owns the single unified "#bahar-ribbon" strip at the top of every editor
-// page: the Save / Print / Export / Templates / Ref No. / Signature /
-// Page Tools / Move Blocks action row, plus the empty "#hugerte-format-
-// toolbar" container that hugerte-setup.js renders HugeRTE's own
-// formatting buttons into directly underneath it. Both rows are children
-// of the same sticky wrapper, so they read - and scroll - as one ribbon
-// instead of two separate bars.
+// page. It's built from two pieces stacked in one sticky wrapper so they
+// read - and scroll - as one ribbon instead of two separate bars:
+//
+//   1. ".bahar-ribbon-actions" - a plain-HTML fallback row with Save,
+//      Print, Templates, Export, Ref No., Signature, Page Tools and Move
+//      Blocks buttons, rendered here.
+//   2. "#hugerte-format-toolbar" - the (initially empty) container
+//      hugerte-setup.js renders HugeRTE's own toolbar into.
+//
+// On pages where HugeRTE actually loads (letter.html, fuel-invoice.html),
+// hugerte-setup.js's "baharribbon" plugin registers those exact same
+// actions as NATIVE HugeRTE toolbar buttons living inside row 2, and once
+// that's confirmed working it hides row 1 (hugerte.css:
+// body.bahar-hugerte-active .bahar-ribbon-actions). So in practice, on
+// those pages, everything - Save/Print/Export/... and HugeRTE's own bold/
+// italic/etc. - ends up in ONE native HugeRTE toolbar row, exactly like
+// any other HugeRTE button.
+//
+// Row 1 only stays visible on stamping-invoice.html, which has no
+// rich-text fields and therefore never loads HugeRTE at all - it's the
+// fallback that keeps Save/Print/Templates/etc. reachable there.
 //
 // This file also owns the save/load modals, the reference-number and
-// signature/stamp modals, generic dropdown-menu plumbing, and the backend
-// template CRUD calls. The actual behaviour behind Export / Ref No. /
-// Signature / Page Tools / Move Blocks lives in frontend/js/bahar-tools.js
-// - this file just renders the buttons and wires them up.
+// signature/stamp modals, generic dropdown-menu plumbing (used by row 1's
+// Export/Page Tools split buttons), and the backend template CRUD calls.
+// The actual behaviour behind Export / Ref No. / Signature / Page Tools /
+// Move Blocks lives in frontend/js/bahar-tools.js - both row 1's buttons
+// and hugerte-setup.js's native buttons call into the same window.*
+// functions there, so the feature behaves identically either way.
 //
 // The old document.execCommand()-based formatting toolbar (bold, italic,
 // font, colors, alignment, lists...) that used to live here has been
