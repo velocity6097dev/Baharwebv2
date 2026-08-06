@@ -5,9 +5,27 @@
 // document.execCommand()-based formatting toolbar that used to live in
 // ribbon.js.
 //
-// ribbon.js still owns the persistent Save / Print / Templates bar and the
-// save/load modals - that stuff has nothing to do with text formatting, so
-// it wasn't touched.
+// ribbon.js now owns ONE unified "#bahar-ribbon" strip: its top row is the
+// Save / Print / Export / Templates / Ref No. / Signature / Page Tools
+// actions (formerly a separate floating .doc-actions-bar), and its bottom
+// row is the "#hugerte-format-toolbar" container this file renders
+// HugeRTE's own formatting buttons into. Both rows live in one sticky
+// wrapper so they read - and behave - as a single always-visible ribbon.
+// ribbon.js creates "#hugerte-format-toolbar" itself (it has to exist
+// before HugeRTE inits), this file just looks it up by id.
+//
+// Two config options do the heavy lifting for the "ribbon should always be
+// visible, and dropdowns shouldn't get clipped/scrolled" fix:
+//   - toolbar_persist: true   -> stops HugeRTE from emptying the toolbar
+//     container on blur (its default inline-mode behaviour). Without this,
+//     the container is only ever populated while a field has focus, which
+//     is why the ribbon used to look "empty" until you clicked into text.
+//   - ui_mode: "split"        -> floating panels (font list, color picker,
+//     table grid, etc.) are appended as viewport-fixed siblings instead of
+//     being laid out inside our sticky/clipping toolbar container. Without
+//     this, those panels get boxed into whatever overflow context the
+//     container has, which is what produced the "scrollable space" bug
+//     instead of a normal floating dropdown.
 //
 // SCOPE (deliberate, see chat for the reasoning):
 //   - letter.html            -> every `.editable-content` page is a target.
@@ -17,8 +35,10 @@
 //                                contenteditable so calculateAll() keeps
 //                                working exactly as before.
 //   - stamping-invoice.html  -> has no prose fields at all, so this file
-//                                isn't loaded there - only the doc-actions
-//                                bar from ribbon.js appears.
+//                                isn't loaded there - only the Bahar ribbon's
+//                                action row (Save/Print/Export/Templates...)
+//                                from ribbon.js appears, with no formatting
+//                                row underneath it.
 //
 // Pagination (auto-builder.js) is intentionally NOT touched in this pass,
 // other than the one hook it needs so newly-created pages also get a
@@ -78,8 +98,8 @@
 
     // Grouped so related buttons sit together. This is a lot of buttons for
     // one toolbar - toolbar_mode: 'wrap' (below) lets it flow onto extra
-    // rows under the doc-actions-bar instead of hiding half of it behind a
-    // "more" overflow chevron.
+    // rows under the Bahar ribbon's action row instead of hiding half of it
+    // behind a "more" overflow chevron.
     const TOOLBAR =
         "undo redo | blocks fontfamily fontsize | " +
         "bold italic underline strikethrough forecolor backcolor removeformat | " +
@@ -91,11 +111,15 @@
         "code codesample preview fullscreen | " +
         "wordcount help";
 
+    // ribbon.js always creates "#hugerte-format-toolbar" as the bottom row
+    // of "#bahar-ribbon" before this script runs (see script order in the
+    // *.html pages). If it's somehow missing - ribbon.js failed to load, or
+    // this got wired into a page without it - fall back to building a
+    // standalone one after the header so HugeRTE still has somewhere to go.
     function insertToolbarContainer() {
         if (document.getElementById(TOOLBAR_ID)) return;
 
-        const actionsBar = document.getElementById("doc-actions-bar");
-        const anchor = actionsBar || document.getElementById("universal-header");
+        const anchor = document.getElementById("bahar-ribbon") || document.getElementById("universal-header");
         if (!anchor) return;
 
         anchor.insertAdjacentHTML(
@@ -113,8 +137,44 @@
             branding: false,
             fixed_toolbar_container_target: toolbarContainer,
             toolbar_mode: "wrap", // let it wrap instead of hiding buttons behind "..."
+
+            // Keep the ribbon populated & visible at all times instead of
+            // collapsing to nothing whenever the field loses focus. Note:
+            // fuel-invoice.html has 3 simultaneous HugeRTE instances (To
+            // Address / Subject / Body) sharing this one container, and a
+            // multi-page letter can have several too - fixed_toolbar_
+            // container_target already funnels all of them into a single
+            // shared box with only the most-recently-active editor's
+            // toolbar actually rendered into it (that's how it behaved
+            // before this change too, just hidden instead of persistent).
+            // hugerte.css has a belt-and-braces rule that only shows the
+            // last child of the container, in case a future HugeRTE
+            // version ever renders more than one at once.
+            toolbar_persist: true,
+
+            // Render floating menus/dropdowns/dialogs fixed to the
+            // viewport (not clipped by our sticky toolbar container). This
+            // is what stops the font/color/etc. dropdowns from turning
+            // into a cramped scrollable box inside the ribbon.
+            ui_mode: "split",
+
             plugins: PLUGINS,
             toolbar: TOOLBAR,
+
+            // Advanced table control: contextual toolbar that pops up
+            // whenever the caret is inside a table, plus the "Advanced"
+            // style/border/background tabs in the table & cell/row
+            // property dialogs (table_advtab/table_cell_advtab/
+            // table_row_advtab default to true already - listed
+            // explicitly here so it's obvious it's intentional).
+            table_toolbar:
+                "tableprops tabledelete | tableinsertrowbefore tableinsertrowafter tabledeleterow | " +
+                "tableinsertcolbefore tableinsertcolafter tabledeletecol | tablecellprops tablemergecells tablesplitcells",
+            table_advtab: true,
+            table_cell_advtab: true,
+            table_row_advtab: true,
+            table_appearance_options: true,
+            table_grid: true,
 
             font_family_formats:
                 "Poppins=Poppins,sans-serif;" +
@@ -135,7 +195,7 @@
             // Wire HugeRTE's own Ctrl+S (registered by the `save` plugin)
             // into the app's existing Save button instead of letting it
             // try to submit a <form> that doesn't exist on these pages.
-            // There's already a Save button in the doc-actions-bar, so
+            // There's already a Save button in the Bahar ribbon, so
             // `save`/`cancel` aren't in the visible toolbar above - this
             // just makes Ctrl+S work while the caret is inside a HugeRTE
             // field, which it otherwise wouldn't (contenteditable doesn't
@@ -148,7 +208,7 @@
 
             // Starter snippets for the `template` plugin's "Insert
             // Template" button. Unrelated to the app's own Mongo-backed
-            // "Templates" feature (the folder icon in the doc-actions-bar,
+            // "Templates" feature (the folder icon in the Bahar ribbon,
             // which saves/loads whole documents) - this is HugeRTE's own,
             // much smaller concept of reusable boilerplate paragraphs.
             // Replace these two with your own canned openings/closings.

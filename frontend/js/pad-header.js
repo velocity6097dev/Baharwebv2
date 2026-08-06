@@ -78,7 +78,7 @@ function injectBaharHeader() {
             
             <!-- UNIVERSAL EDITABLE REF NO AND DATE -->
             <div style="display: flex; justify-content: space-between; font-family: 'Poppins', sans-serif; font-size: 0.95rem; font-weight: 600; margin-bottom: 1rem; color: #1e293b;">
-                <div contenteditable="true" 
+                <div id="bahar-ref-no-field" contenteditable="true" 
                      style="outline: none; min-width: 200px; padding: 4px; border: 1px dashed transparent; transition: 0.2s; border-radius: 4px;" 
                      onfocus="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#f8fafc';" 
                      onblur="this.style.borderColor='transparent'; this.style.backgroundColor='transparent';">

@@ -1,38 +1,48 @@
 /* frontend/css/hugerte.css */
-/* The bar HugeRTE renders its formatting controls into (bold, italic,
-   font, alignment, lists...). It only fills up - and only becomes visible
-   - while a `.editable-content` / `.rte-field` element has focus, so it
-   collapses to nothing the rest of the time instead of reserving dead
-   space. See frontend/js/hugerte-setup.js. */
-
-.hugerte-format-toolbar {
-    position: sticky;
-    top: 45px; /* sits directly under .doc-actions-bar */
-    z-index: 999;
-    background: #f8fafc;
-    /* toolbar_mode: 'wrap' in hugerte-setup.js can spread this over 3-4
-       rows now that every plugin's buttons are enabled. Cap it and let it
-       scroll instead of swallowing the whole viewport on short screens. */
-    max-height: 45vh;
-    overflow-y: auto;
+/*
+ * The bottom row of #bahar-ribbon (see ribbon.js) - the box HugeRTE renders
+ * its formatting controls into (bold, italic, font, alignment, lists...).
+ *
+ * toolbar_persist:true + ui_mode:"split" (hugerte-setup.js) mean:
+ *   - it stays populated & visible at all times, not just while a field
+ *     has focus
+ *   - HugeRTE's floating dropdowns/menus/dialogs render as viewport-fixed
+ *     siblings elsewhere in the DOM, NOT as children of this box - so this
+ *     box must never clip or scroll them. No max-height/overflow here.
+ *     If the button list wraps onto more rows, the row (and the sticky
+ *     ribbon it lives in) just grows taller instead.
+ */
+#hugerte-format-toolbar {
+    min-height: 0;
 }
 
-.hugerte-format-toolbar:not(:empty) {
-    border-bottom: 2px solid #cbd5e1;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+/* On pages with no HugeRTE field at all (stamping-invoice.html) this row
+   never gets anything rendered into it - collapse it to nothing so only
+   the action row above it shows. */
+#hugerte-format-toolbar:empty {
+    display: none;
 }
 
-/* Let HugeRTE's own skin sit flush inside our bar instead of floating a
+/* Belt-and-braces: fixed_toolbar_container_target is shared by every
+   HugeRTE instance on the page (fuel-invoice.html has 3 at once; a
+   multi-page letter can too). Only the most-recently-active editor should
+   ever have UI in here - this just guarantees only one toolbar block is
+   ever visible even if a future HugeRTE version renders more than one. */
+#hugerte-format-toolbar > *:not(:last-child) {
+    display: none;
+}
+
+/* Let HugeRTE's own skin sit flush inside our ribbon instead of floating a
    separate rounded/shadowed card on top of it */
-.hugerte-format-toolbar .tox-toolbar__primary,
-.hugerte-format-toolbar .tox-toolbar-overlord,
-.hugerte-format-toolbar .tox-editor-header {
+#hugerte-format-toolbar .tox-toolbar__primary,
+#hugerte-format-toolbar .tox-toolbar-overlord,
+#hugerte-format-toolbar .tox-editor-header {
     background: transparent !important;
     box-shadow: none !important;
 }
 
 @media print {
-    .hugerte-format-toolbar {
+    #hugerte-format-toolbar {
         display: none !important;
     }
 }

@@ -1,8 +1,9 @@
 /* frontend/css/ribbon.css */
 /* Page/document layout only. The old execCommand ribbon toolbar (bold,
    italic, font, colors, alignment, lists...) has moved to HugeRTE, styled
-   in hugerte.css. The Save/Print/Templates action bar now lives in
-   ribbon.js (see .doc-actions-bar, injected inline there). */
+   in hugerte.css. The unified Bahar ribbon (Save/Print/Export/Templates/
+   Ref No./Signature/Page Tools actions + the HugeRTE formatting row) lives
+   in ribbon.js (see #bahar-ribbon, injected inline there). */
 
 /* 3. The Gray Workspace */
 .word-workspace { display: block; background: #e2e8f0; padding: 40px 0; min-height: 100vh; }
@@ -17,13 +18,64 @@
 .editable-content ul, .editable-content ol { padding-left: 40px; margin-bottom: 10px; }
 .editable-content li { margin-bottom: 5px; }
 
+/* Signature/Stamp images inserted by the ribbon's Signature tool
+   (bahar-tools.js). The resize:both + overflow:hidden wrapper gives a
+   drag-to-resize corner in every browser, on top of native drag-to-
+   reposition within the surrounding text (built into contenteditable). */
+.bahar-media-block { border: 1px solid transparent; border-radius: 2px; }
+.bahar-media-block:hover { border-color: #94a3b8; cursor: grab; }
+@media print {
+    .bahar-media-block { border: none !important; }
+}
+
 /* 6. Page Numbers */
 .page-footer { position: absolute; bottom: 10mm; right: 20mm; color: gray; font-size: 12px; pointer-events: none; }
 
 /* 7. Strict Print Styles */
 @media print {
     @page { margin: 0; size: A4 portrait; }
-    #universal-header, .doc-actions-bar, .no-print { display: none !important; }
+    #universal-header, #bahar-ribbon, .no-print { display: none !important; }
     body, .word-workspace { background: white !important; padding: 0 !important; margin: 0 !important; display: block !important; }
     .word-page { box-shadow: none !important; margin: 0 !important; padding: 20mm !important; height: 297mm !important; width: 210mm !important; page-break-after: always !important; break-after: page !important; }
+}
+
+/* 8. A4 margin guides (toggled by the ribbon's "Toggle Page Guides" tool -
+   see bahar-tools.js). Purely a visual aid, never printed. */
+body.bahar-show-guides .word-page {
+    position: relative;
+}
+body.bahar-show-guides .word-page::after {
+    content: "";
+    position: absolute;
+    inset: 20mm;
+    border: 1px dashed rgba(37, 99, 235, 0.45);
+    pointer-events: none;
+}
+@media print {
+    body.bahar-show-guides .word-page::after { display: none !important; }
+}
+
+/* 9. Manual "Insert Page Break" marker (bahar-tools.js). On screen it's a
+   small labelled divider so it's obvious it's there; on paper it forces a
+   real page break and otherwise disappears. */
+.bahar-page-break {
+    margin: 18px 0;
+    border-top: 1px dashed #94a3b8;
+    text-align: center;
+    font-size: 0.75rem;
+    color: #94a3b8;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    user-select: none;
+}
+.bahar-page-break::before {
+    content: "Page Break";
+    display: inline-block;
+    background: #fff;
+    padding: 0 8px;
+    transform: translateY(-9px);
+}
+@media print {
+    .bahar-page-break { border-top: none; margin: 0; height: 0; overflow: hidden; page-break-after: always; break-after: page; }
+    .bahar-page-break::before { content: none; }
 }

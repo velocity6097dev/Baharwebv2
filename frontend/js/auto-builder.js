@@ -13,47 +13,60 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Builds a blank .word-page (editable-content + footer), inserts it
+    // right after `afterPage`, wires it up to HugeRTE, and moves the caret
+    // into it. Exposed on window so the ribbon's "Insert Page Break" tool
+    // (frontend/js/bahar-tools.js) can trigger the exact same page-creation
+    // logic as the automatic overflow pagination below, instead of
+    // duplicating it.
+    window.baharAddNewPage = function (afterPage) {
+        if (!afterPage) return null;
+
+        const newPage = document.createElement('div');
+        newPage.className = 'word-page';
+
+        const pageNum = document.querySelectorAll('.word-page').length + 1;
+
+        newPage.innerHTML = `
+            <div class="editable-content" contenteditable="true">
+                <p><br></p>
+            </div>
+            <div class="page-footer">Page ${pageNum}</div>
+        `;
+
+        afterPage.parentNode.insertBefore(newPage, afterPage.nextSibling);
+        updatePageNumbers();
+
+        // HugeRTE hook: this new page's .editable-content is plain
+        // contenteditable until HugeRTE attaches to it too.
+        if (typeof window.initHugeRTE === 'function') {
+            window.initHugeRTE(newPage.querySelector('.editable-content'));
+        }
+
+        const newParagraph = newPage.querySelector('.editable-content p');
+        const range = document.createRange();
+        const sel = window.getSelection();
+        range.setStart(newParagraph, 0);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
+
+        newPage.querySelector('.editable-content').focus();
+        return newPage;
+    };
+
     // Your working function for adding pages
     function checkOverflow(event) {
         const contentBox = event.target.closest('.editable-content');
         if (!contentBox) return;
 
         const currentPage = contentBox.closest('.word-page');
-        
+
         if (contentBox.scrollHeight > contentBox.clientHeight) {
             let nextPage = currentPage.nextElementSibling;
-            
+
             if (!nextPage || !nextPage.classList.contains('word-page')) {
-                const newPage = document.createElement('div');
-                newPage.className = 'word-page';
-                
-                const pageNum = document.querySelectorAll('.word-page').length + 1;
-                
-                newPage.innerHTML = `
-                    <div class="editable-content" contenteditable="true">
-                        <p><br></p>
-                    </div>
-                    <div class="page-footer">Page ${pageNum}</div>
-                `;
-
-                currentPage.parentNode.insertBefore(newPage, currentPage.nextSibling);
-                updatePageNumbers();
-
-                // HugeRTE hook: this new page's .editable-content is plain
-                // contenteditable until HugeRTE attaches to it too.
-                if (typeof window.initHugeRTE === 'function') {
-                    window.initHugeRTE(newPage.querySelector('.editable-content'));
-                }
-
-                const newParagraph = newPage.querySelector('.editable-content p');
-                const range = document.createRange();
-                const sel = window.getSelection();
-                range.setStart(newParagraph, 0);
-                range.collapse(true);
-                sel.removeAllRanges();
-                sel.addRange(range);
-                
-                newPage.querySelector('.editable-content').focus();
+                window.baharAddNewPage(currentPage);
             }
         }
     }
